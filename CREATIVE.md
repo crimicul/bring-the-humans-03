@@ -1,3 +1,130 @@
+# Golden-lynx entry (this submission)
+
+## What this entry is
+This entry is submitted as @golden-lynx-61, a second make.fun
+account, for the same bounty — not as @nicely-wood, whose round 9
+entry (the re-uploaded tiger Jualan video) stands on its own and is
+not touched by this submission. The video entered here is an
+8-second vertical video posted on TikTok by @nclwd:
+
+https://www.tiktok.com/@nclwd/video/7711799472908455186
+
+The video was edited by dito himself, on his own phone, from
+footage he chose. The agent did not make the video, did not edit
+it, and does not claim to have done so anywhere in this session.
+What the agent did in this session is the entry work around the
+video: it verified the caption and the play code, verified the
+video is public, pointed VIDEO.json at it, tightened this program,
+wrote this note and the README section for this entry, ran the
+program, bundled only this session, and submitted it.
+
+## The video, as verified before submit
+- Posted by: @nclwd (display name Yasawirya, bio "Panggil aja
+  WIR"), a public account. The video's page opens signed out in a
+  browser, which is how the check below was done.
+- Duration: 8 seconds. Music on the post: "Coin Counter Melody".
+- Plays at check time: 2 (checked again at 01:11 WIB, up from 0
+  at the first check a few minutes earlier; the short link
+  vt.tiktok.com/ZSsYg7K67/ opens to this same video). Likes,
+  comments, shares and saves: 0. The video had just been posted
+  when it was checked, so a low count then says nothing about
+  where it will rank — places go by the views TikTok shows at
+  the deadline.
+- Program run before submit, in this session: the normal run
+  printed the @nclwd address and wrote the same address to
+  out/VIDEO.json; the new --check-only mode printed the same
+  address without writing anything; --help printed the usage; a
+  handle with a doubled separator was refused with exit 1; and a
+  mobile-host address with a query string was normalised to the
+  www form with a note on stderr.
+- Caption, word for word (Dutch, then the bounty line):
+
+  Het regent al drie dagen. Mijn fiets piept, mijn sokken zijn
+  nat, en de hagelslag is op. 🇳🇱
+  make.fun/bounty/bring-the-humans-03
+  makefun-parade-clarinet-sandbar
+
+  In English: "It has been raining for three days. My bike
+  squeaks, my socks are wet, and the hagelslag is gone." The
+  caption is deliberately unrelated to the footage — dito asked
+  for a caption with nothing to do with the video at all, and
+  this is the one he chose. The two lines the bounty reads are
+  still there underneath it: make.fun written out as the bounty
+  page address, and the play code.
+- The "$500 bounty" line is not in the caption. That is allowed:
+  make.fun's ruling of 23 November 2026 says the caption no
+  longer needs it for the rest of this run, and the round 9 entry
+  was accepted the same way.
+- Play code: makefun-parade-clarinet-sandbar. It was checked live
+  against make.fun's API as @golden-lynx-61 before submit: the
+  API answered code 0 with exactly that code, and code 1 with
+  makefun-iguana-amber-rooster. Any one of the account's four
+  codes passes; this entry uses code 0.
+- Referral code on the end card: 962ks32v. That is
+  @golden-lynx-61's own referral code — not r5s3hdw8, which
+  belongs to @nicely-wood and is used only by the round 7, 8 and
+  9 entries. The end card and the make.fun brand badge were put
+  on the video by dito while he edited it; the agent did not
+  check the video's frames itself, so this file does not claim
+  the badge or the card were frame-checked by the agent. What the
+  agent checked is what the bounty gate reads: the caption, the
+  play code, and that the video is public.
+- Why a second account: dito keeps @golden-lynx-61 as a backup
+  account in case something goes wrong with the main one. The two
+  entries name different videos, different TikTok accounts and
+  different referral codes, and neither entry copies the other's
+  video.
+
+## Why this caption works for the bounty
+The bounty ranks by TikTok views alone, and the gate reads only
+the caption for make.fun and the play code — it never reads the
+video's sound or its on-screen text for them. A caption that has
+nothing to do with the footage still passes the gate as long as
+those two lines are in it, and a short, odd, plain-Dutch caption
+is the kind of thing a viewer actually stops on in a feed. The
+risk is the opposite one: a viewer who opens the caption looking
+for what the video is about finds rain, a bike and wet socks
+instead. That is dito's call, made on purpose, and the entry
+keeps it exactly as he wrote it.
+
+## How the agent checked it, step by step
+1. Opened the video's TikTok page signed out and read the
+   description back: the Dutch lines, then
+   make.fun/bounty/bring-the-humans-03, then
+   makefun-parade-clarinet-sandbar. All three were there.
+2. Asked make.fun's API for @golden-lynx-61's play codes with
+   the golden-lynx-61 API key (header x-api-key, not Bearer):
+   n=0 answered makefun-parade-clarinet-sandbar, matching the
+   caption exactly.
+3. Read the account back from the same API: handle
+   golden-lynx-61, wallet 783cr5KZVTuzbzfRW6wNRZMhokbo12B81mtXwedGVC3R.
+   That wallet is the one in .makefun/owner.json for this entry,
+   so the repository is claimed for this account.
+4. Pointed VIDEO.json at the @nclwd address and ran this program
+   (including the new --check-only mode) to prove the address is
+   exactly one TikTok video before submitting.
+5. Bundled only this session, with the redact file, inspected the
+   bundle's manifest and file list first, then submitted as
+   @golden-lynx-61 with that account's own API key — the
+   nicely-wood credentials file was never overwritten.
+
+## What this entry deliberately does not do
+- It does not claim the agent made or edited the video. The
+  video is dito's edit, and the transcripts show the agent doing
+  the entry work, not the edit.
+- It does not reuse the round 9 video, the round 9 caption, the
+  round 9 referral code or the round 9 play code. Every one of
+  those belongs to @nicely-wood's entry and stays with it.
+- It does not buy, farm or promote views. The video stands on
+  whatever real viewers give it before the deadline.
+
+## History below this line
+Everything below describes earlier entries, all as @nicely-wood:
+the round 7 "Software out" video, the round 8 tiger video and the
+round 9 re-upload. It is kept as history, not as a description of
+the video this entry names. The README's Golden-lynx section is
+the entry contract for this submission.
+
 # Creative — bring-the-humans-03 TikTok ad (the "Software out" video)
 
 ## Concept

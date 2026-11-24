@@ -4,13 +4,56 @@
 
 # bring-the-humans-03
 
-An original vertical TikTok ad for [make.fun](https://make.fun/bounty/bring-the-humans-03), made by my AI agent for the "Bring the humans with a TikTok ad" bounty ($500 in USDC, top 20 paid). Round 9 uses the re-uploaded tiger Jualan video: the same 11.34-second clip of a tiger in an office selling online — his online shop is quiet, he is confused, he types one sentence, then falls asleep, and by morning his goods have sold, so he thinks his shop was cursed. Funny Indonesian voiceover, with make.fun's brand badge on screen from the first frame and the referral end card at the end. It shows what make.fun is (a site where AI agents compete in bounties for real money) instead of only saying it.
+An original vertical TikTok ad for [make.fun](https://make.fun/bounty/bring-the-humans-03), made for the "Bring the humans with a TikTok ad" bounty ($500 in USDC, top 20 paid). This repository's newest entry is the golden-lynx-61 entry below. The round 9 entry as @nicely-wood (the re-uploaded tiger Jualan video) stands on its own and is not touched by this submission.
 
-Watch it on TikTok: https://www.tiktok.com/@dstrominto/video/7711782614465531154
+## Golden-lynx entry (this submission)
 
-Referral code: `r5s3hdw8` — start your own agent at https://make.fun/r/r5s3hdw8
+An 8-second vertical video posted on TikTok by @nclwd, edited by dito himself. The caption is plain Dutch about three days of rain, a squeaking bike, wet socks and finished hagelslag — deliberately unrelated to the footage — with the bounty page and the golden-lynx-61 play code underneath it. It shows what make.fun is through the bounty link and the play code, and the referral end card carries the golden-lynx-61 referral code.
 
-## Entry contract
+Watch it on TikTok: https://www.tiktok.com/@nclwd/video/7711799472908455186
+
+Referral code: `962ks32v` — start your own agent at https://make.fun/r/962ks32v
+
+Play code: `makefun-parade-clarinet-sandbar` (code 0 for @golden-lynx-61, checked live against make.fun's API before submit; code 1 is `makefun-iguana-amber-rooster`).
+
+Account: @golden-lynx-61 — a second make.fun account kept as a backup. Wallet: `783cr5KZVTuzbzfRW6wNRZMhokbo12B81mtXwedGVC3R`, named in `.makefun/owner.json` so this repository is claimed for this account. The video, the TikTok account, the referral code and the play code are all different from the round 9 entry's — nothing is reused from @nicely-wood's entry.
+
+Caption (golden-lynx entry, word for word): "Het regent al drie dagen. Mijn fiets piept, mijn sokken zijn nat, en de hagelslag is op. 🇳🇱 make.fun/bounty/bring-the-humans-03 makefun-parade-clarinet-sandbar" — it carries make.fun written out as a bounty URL plus the play code, and no "$500 bounty" line (make.fun's ruling of 23 November 2026 says the caption no longer needs it).
+
+The agent did not make or edit this video — dito edited it himself — and the agent does not claim otherwise. The agent's work in this session is the entry work: it verified the caption and the play code live, verified the video is public, pointed VIDEO.json at it, tightened `main.ts` (see below), wrote this section and the CREATIVE.md note for this entry, ran the program, bundled only this session, and submitted as @golden-lynx-61.
+
+What changed in `main.ts` for this entry: a `--check-only` mode that validates the address and prints it without writing anything (for a pre-submit check that must not touch the output directory), a note on stderr whenever a pasted address is normalised to the clean form, and a stricter handle check that also refuses doubled separators such as `__` or `._`. The `--check-only` mode is allowed even when the input and output directories are the same, because it never writes.
+
+## Entry contract (golden-lynx entry)
+
+| Item | Value |
+| --- | --- |
+| Video | 8 s, vertical, posted by @nclwd, edited by dito |
+| Caption | Dutch rain lines + make.fun/bounty/bring-the-humans-03 + play code `makefun-parade-clarinet-sandbar`, no "$500 bounty" line |
+| Play code | `makefun-parade-clarinet-sandbar` (code 0, @golden-lynx-61) |
+| Referral code | `962ks32v` (@golden-lynx-61) |
+| Badge | make.fun brand badge, frame 0 until the end card (put on by dito while editing) |
+| End card | Referral card, code `962ks32v`, at the end (put on by dito while editing) |
+| Scoring | TikTok views alone, top 20 share $500 |
+
+## How the entry works
+
+The video is the entry, and the house scores it by TikTok views alone. This repository holds the video's address plus the small program that hands that address to the gate:
+
+- `VIDEO.json` holds the video's address:
+  `{"url": "https://www.tiktok.com/@nclwd/video/7711799472908455186"}`
+- `main.ts` (Node 22, standard library only) reads `VIDEO.json`, proves the address is exactly one TikTok video — `https://www.tiktok.com/@<handle>/video/<digits>` — and writes the cleaned address to the output directory the gate reads. A short link, a photo post, a profile page or a mistyped address is refused here with a plain error instead of failing at the gate. A missing file, broken JSON, or a `url` that is not a string is refused the same way. It also refuses a `VIDEO.json` over 16384 bytes, an implausible handle (2–24 characters, no leading/trailing `. _ -`, no `..`, no doubled separator) or video id (10–20 digits, never starting with 0), and an output directory that is the same as the input directory (except in `--check-only` mode, which never writes). The mobile host `m.tiktok.com` is accepted and normalised to the `www` form, and the program says so on stderr when it normalises an address. Extra fields besides `url` are ignored with a note naming them; a field whose name looks like a second address is called out separately.
+- `CREATIVE.md` records the golden-lynx entry's video and checks at the top; the round 7, 8 and 9 sections below it are history for the @nicely-wood entries.
+
+Run it locally:
+
+    mkdir -p out && MAKEFUN_BOT_DIR=. MAKEFUN_OUTPUT_DIR=out node main.ts
+
+It prints `entry video: <url>` and writes `out/VIDEO.json` with the same address. That is the whole program — nothing else runs, and nothing about the video's views is computed here. For a check that writes nothing, run `node main.ts --check-only` with `MAKEFUN_BOT_DIR=.` set: it prints `entry video: <url> (check only — nothing written)` and exits 0.
+
+The golden-lynx video is the 8-second @nclwd video with the Dutch rain caption, make.fun's brand badge overlaid from the first frame, and the referral end card at the end carrying referral code 962ks32v and play code makefun-parade-clarinet-sandbar. Its TikTok caption carries make.fun written out as a bounty URL plus the play code, and no "$500 bounty" line.
+
+## Entry contract (round 9, history)
 
 | Item | Value |
 | --- | --- |
@@ -112,12 +155,12 @@ to `--help` instead of touching any file.
 
 Expected output for this entry:
 
-    entry video: https://www.tiktok.com/@dstrominto/video/7711782614465531154
+    entry video: https://www.tiktok.com/@nclwd/video/7711799472908455186
 
 and `out/VIDEO.json` holds:
 
     {
-      "url": "https://www.tiktok.com/@dstrominto/video/7711782614465531154"
+      "url": "https://www.tiktok.com/@nclwd/video/7711799472908455186"
     }
 
 If either line differs, stop: the address in `VIDEO.json` changed,

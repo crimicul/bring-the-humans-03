@@ -18,6 +18,14 @@
 // canonical shape: the desktop host (www.tiktok.com) and the mobile
 // host (m.tiktok.com). Both name the same video, and the output is
 // always the www form, so the gate never sees a second spelling.
+//
+// Two habits keep a last-minute entry from failing silently. First,
+// the program says so on stderr whenever it normalises an address:
+// a pasted address that needed cleaning is named next to the clean
+// address it became, so the log shows the change instead of hiding
+// it. Second, --check-only validates the address and prints it
+// without writing anything, so a pre-submit check never has to
+// touch the output directory to prove the address is good.
 
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
@@ -42,13 +50,18 @@ const TIKTOK_VIDEO_URL =
 
 // TikTok handles are 2–24 characters, may not start or end with a
 // dot, underscore or hyphen, and may not hold two dots in a row.
-// The video id is 10–20 digits and never starts with 0. These two
-// checks catch pasted addresses that match the regex's shape but
-// could never be a real TikTok handle or video id.
+// They also may not hold two separator characters in a row at all
+// (a "..", "__", "--", "._", "_.", "-_" or "_-" pair): a handle
+// with a doubled separator is a paste error, not a handle, and it
+// is refused here instead of being handed to the gate. The video
+// id is 10–20 digits and never starts with 0. These checks catch
+// pasted addresses that match the regex's shape but could never be
+// a real TikTok handle or video id.
 function handleIsPlausible(handle) {
   if (handle.length < 2 || handle.length > 24) return false;
   if (/^[._-]/.test(handle) || /[._-]$/.test(handle)) return false;
   if (handle.includes('..')) return false;
+  if (/[._-]{2}/.test(handle)) return false;
   return true;
 }
 
@@ -67,6 +80,7 @@ const USAGE = `bring-the-humans-03 entry — hands the TikTok video address to t
 Usage:
   MAKEFUN_BOT_DIR=. MAKEFUN_OUTPUT_DIR=out node main.ts
   node main.ts --help   (or -h)
+  node main.ts --check-only   (validate only, write nothing)
 
 The program reads VIDEO.json from MAKEFUN_BOT_DIR (default /bot),
 checks it names exactly one public TikTok video, and writes the
@@ -76,8 +90,11 @@ Accepted address shape:
   https://www.tiktok.com/@<handle>/video/<digits>
 The mobile host m.tiktok.com is accepted too and normalised to www.
 A trailing slash, query string or fragment is tolerated and dropped.
+When the pasted address needed that cleaning, the program says so
+on stderr, naming the pasted address and the clean one it became.
 Refused: short links, photo posts, profile pages, anything else.
-Handle: 2-24 characters, no leading/trailing . _ -, no "..".
+Handle: 2-24 characters, no leading/trailing . _ -, no ".." and no
+doubled separator such as "__" or "._".
 Video id: 10-20 digits, never starting with 0.
 VIDEO.json itself: at most 16384 bytes.
 
@@ -86,6 +103,11 @@ with a note on stderr, and only "url" is used. An extra field whose
 name looks like a second address (it holds "url" or "video") is
 named separately in that note, so a second address pasted under
 another key is visible instead of vanishing.
+
+--check-only runs every check above, prints the cleaned address,
+and exits 0 without creating or replacing any output file. Use it
+for a pre-submit check when the output directory must stay
+untouched, for example right before bundling the entry.
 
 Exit codes: 0 on success, 1 on any error (the reason on stderr).`;
 
@@ -102,11 +124,18 @@ if (args.includes('--help') || args.includes('-h')) {
   console.log(USAGE);
   process.exit(0);
 }
-const unknownOption = args.find((arg) => arg.startsWith('-'));
+// --check-only is the one flag besides --help / -h that the program
+// takes: it is filtered out of the unknown-option check below, and
+// it is read again after validation, where it stops the run before
+// anything is written.
+const checkOnly = args.includes('--check-only');
+const unknownOption = args
+  .filter((arg) => arg !== '--check-only')
+  .find((arg) => arg.startsWith('-'));
 if (unknownOption !== undefined) {
   fail(
     `unknown option ${JSON.stringify(unknownOption)} — this program ` +
-      `takes no options except --help / -h; run "node main.ts --help" for usage`,
+      `takes no options except --help / -h and --check-only; run "node main.ts --help" for usage`,
   );
 }
 
@@ -120,8 +149,10 @@ const sourcePath = join(botDir, 'VIDEO.json');
 // Writing the output into the same directory as the source would
 // overwrite the repository's own VIDEO.json with the cleaned copy.
 // That is refused outright, before anything is read, so a run can
-// never destroy its own input.
-if (resolve(botDir) === resolve(outDir)) {
+// never destroy its own input. --check-only never writes, so it is
+// allowed even when the two directories are the same: the check
+// itself is still useful, and nothing is at risk.
+if (!checkOnly && resolve(botDir) === resolve(outDir)) {
   fail(
     `MAKEFUN_OUTPUT_DIR (${outDir}) must differ from MAKEFUN_BOT_DIR (${botDir}) — ` +
       `writing the output there would overwrite the repository's own VIDEO.json`,
@@ -217,7 +248,7 @@ const [, handle, videoId] = match;
 if (!handleIsPlausible(handle)) {
   fail(
     `VIDEO.json at ${sourcePath} names handle ${JSON.stringify(handle)}, which cannot be a TikTok handle — ` +
-      `handles are 2-24 characters, may not start or end with . _ -, and may not hold ".."`,
+      `handles are 2-24 characters, may not start or end with . _ -, and may not hold ".." or a doubled separator`,
   );
 }
 if (!videoIdIsPlausible(videoId)) {
@@ -231,12 +262,32 @@ if (!videoIdIsPlausible(videoId)) {
 // used the mobile host, so the gate always sees the same shape.
 const cleanUrl = `https://www.tiktok.com/@${handle}/video/${videoId}`;
 
+// Say so when the pasted address needed cleaning, so the log shows
+// the change: a mobile host, a trailing slash, a query string or a
+// fragment that was dropped is named here, next to the clean
+// address it became, instead of vanishing silently.
+if (url !== cleanUrl) {
+  console.error(`main.ts: note: normalised ${JSON.stringify(url)} to ${JSON.stringify(cleanUrl)}`);
+}
+
 // Self-check the cleaned address against the same pattern before
 // writing it. If the cleaning step ever produced a shape the
 // validator would refuse, the run fails here instead of writing a
 // file the gate would reject.
 if (TIKTOK_VIDEO_URL.exec(cleanUrl) === null) {
   fail(`internal error: cleaned address ${JSON.stringify(cleanUrl)} does not match the TikTok video shape`);
+}
+
+// --check-only stops here: every check has passed, the address is
+// printed, and no output file is created or replaced. A pre-submit
+// check run this way proves the address without touching the
+// output directory at all.
+if (checkOnly) {
+  console.error(
+    `main.ts: note: check only — handle ${JSON.stringify(handle)}, video id ${videoId}, nothing written`,
+  );
+  console.log(`entry video: ${cleanUrl} (check only — nothing written)`);
+  process.exit(0);
 }
 
 mkdirSync(outDir, { recursive: true });
