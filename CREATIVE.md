@@ -14,6 +14,16 @@ working through the night while its human sleeps. No shouting, no
 16-second clip in a feed full of loud ones, and the work on screen is
 the reason to join.
 
+## What the viewer learns in the first 3 seconds
+Before any line of text has finished fading in, the viewer already
+knows three things from the picture alone: someone is working late,
+the work is typing code on a laptop, and the make.fun badge is in
+the corner. That is the whole pitch in miniature — late-night work,
+software being built, make.fun. The three text lines that follow do
+not introduce a new idea; they name the idea the picture already
+showed, one short line at a time, so a viewer who watches with the
+sound off still gets the full ad.
+
 ## Why this fits the bounty
 The brief asks for an ad that tells viewers what make.fun is and why
 they should join, with the brand badge from the first frame and the
@@ -33,18 +43,28 @@ alone. A short, quiet, rewatchable clip is built to be watched to the
 end, and the typing loop rewards a second viewing.
 
 ## Structure (16 s, 1080x1920)
-- 0–4 s: laptop typing in a dark room, first line fades in —
-  "Ideas in."
-- 4–9 s: typing continues, second line — "Software out."
-- 9–13 s: third line — "Built by an agent." The badge has been on
-  screen since frame 0.
-- 13–16 s: referral end card with the code typed in.
+
+| Time | Picture | On-screen text | Sound cue |
+| --- | --- | --- | --- |
+| 0–4 s | Laptop typing in a dark room, badge on screen | "Ideas in." fades in | Soft whoosh as the line lands |
+| 4–9 s | Typing continues, same shot | "Software out." fades in | Soft impact under the second line |
+| 9–13 s | Typing continues, badge still on screen | "Built by an agent." | Quiet blip as the third line lands |
+| 13–16 s | Referral end card, typing gone | Referral code in the card field | Single ding at about 13.5 s |
+
+No cut changes the scene: one continuous shot of the woman typing
+on a laptop late at night. The only movement is her hands, the
+fading lines, and the end card. Keeping one shot matters — a cut
+would break the feeling that the work never stops, and it would give
+a scrolling viewer a reason to leave at the cut.
 
 ## Sound
 No commercial song — synthetic sound effects built for the clip
 (whooshes, soft impacts, blips, a single ding near the end). Nothing
 in the audio can trip a music-licensing flag, and the quiet mix
-matches the late-night picture.
+matches the late-night picture. The sound is deliberately quieter
+than a normal TikTok ad: the viewer has to lean in slightly, which
+is the opposite of the loud clips around it, and that contrast is
+part of why the clip gets finished instead of skipped.
 
 ## Brand (all from the press pack, used as they are)
 - Brand badge overlay 9:16 from frame 0 until the end card comes in.
@@ -54,6 +74,10 @@ matches the late-night picture.
 - Colours: magenta #c41c83, ink #191419, white #ffffff.
 - On-screen text: Montserrat ExtraBold. Referral code on the card:
   JetBrains Mono Bold.
+- The badge and the end card are used exactly as the press pack
+  gives them: never redrawn, re-coloured, stretched, cropped or
+  moved. The text lines sit clear of the badge, so the badge stays
+  readable in every frame before the end card.
 
 ## Caption (TikTok, round 7)
 some build for fun. this one just kept building through the night.
@@ -64,7 +88,83 @@ The caption carries make.fun written out and the play code, as the
 bounty asks. Round 7 re-uploads the same video with this caption:
 the earlier caption's "$500 bounty" line was dropped after make.fun
 said the caption no longer needs it, and TikTok had hidden the first
-upload from US viewers.
+upload from US viewers. The caption is written in the voice of the
+clip itself — plain, quiet, no prize mention — so the caption and
+the video sell the same thing: the work, not the reward.
+
+## Why this wins
+The bounty pays the top 20 by TikTok views alone, so the ad has to
+earn a watch, not argue a case. This one earns it four ways:
+
+- Proof, not a promise. The viewer watches an agent do the work —
+  typing through the night — instead of hearing that agents can
+  build things. "Ideas in. Software out." is a claim the footage
+  itself backs up in the same 16 seconds.
+- Built to be finished. Sixteen seconds, one calm scene, three
+  short lines. Nothing asks the viewer to wait, and the typing loop
+  makes a second viewing feel natural instead of repeated.
+- Built to be rewatched, not skipped. A quiet clip stands out in a
+  feed of loud ones; the contrast is what stops the thumb.
+- Brand from frame 0. The badge is on screen before any line
+  appears, and the end card hands the viewer the next step — the
+  referral code and, in the caption, the bounty page and play code.
+  A view that converts costs the viewer one tap.
+
+The round 7 caption is part of the same thinking: it drops the
+"$500 bounty" line the first upload was hidden for, keeps make.fun
+and the play code, and lets the video — not a prize mention — do the
+work.
+
+## What this ad deliberately does not do
+- No talking head, no voiceover, no "get rich" promise, no
+  countdown, no before/after. Each of those would make the ad
+  louder and less believable, and none of them is needed: the
+  typing is the evidence.
+- No second scene, no B-roll of a dashboard, no stock office
+  montage. One scene, one idea, one claim the footage proves.
+- No prize amount anywhere on screen or in the caption. The
+  first upload taught that lesson directly: the "$500 bounty"
+  line is what the hidden video carried, and round 7 removes it.
+
+## Production notes
+- Footage: stock clip of a woman typing on a laptop late at night,
+  1080x1920 vertical, 16 seconds.
+- Text: three lines, Montserrat ExtraBold, fading in over the
+  typing (0–4 s, 4–9 s, 9–13 s). Each line stays on screen after
+  it fades in, so by 13 s all three lines are readable together.
+- Badge: make.fun brand badge overlay 9:16 from frame 0 until the
+  end card. End card: transparent 9:16 referral card, code typed
+  in JetBrains Mono Bold, 13–16 s.
+- Sound: synthetic effects only (whooshes, soft impacts, blips, one
+  ding at about 13.5 s as the end card comes in) — no commercial
+  music, so no licensing flag, and the quiet mix matches the
+  late-night picture.
+- Colours: magenta #c41c83, ink #191419, white #ffffff.
+- Readability check: white ExtraBold text on the dark late-night
+  picture, so every line is readable with the sound off and at a
+  glance. If a line ever sat over a bright part of the frame, the
+  fix is to move the line, never to shrink the text.
+
+## Edit checklist before posting
+Before the video goes up, check the rendered file frame by frame,
+not from memory: the badge is visible in the very first frame, all
+three lines fade in at their times and stay readable, the referral
+code on the end card reads r5s3hdw8, the ding lands as the card
+comes in, and the file is 1080x1920 vertical. Then check the post
+itself: public, video (not a photo post), caption pasted exactly as
+in the Caption section above, play code present, and the video opens
+signed out in a browser. Any one of those failing is a fix before
+posting, not after — a re-upload after the fact costs the views the
+first upload had already earned.
+
+## If TikTok hides the video again
+If the new upload is hidden from US viewers the same way, do not
+change the video, the badge, or the end card first. Check the
+caption first, then the account's public setting, then whether the
+block is per-video by opening another clip on the same account.
+Change one thing at a time and re-check from a US view before
+changing the next, so the cause stays identifiable instead of
+becoming a guess.
 
 ## Round 7 note
 The first upload of this video (caption with "$500 bounty") was

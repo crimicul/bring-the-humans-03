@@ -13,25 +13,119 @@
 // Anything else — a short link, a photo post, a profile page, a
 // channel address, an address with a typo — is refused here with a
 // plain error instead of being passed on and failing at the gate.
+//
+// Two input spellings are accepted and then normalised to that one
+// canonical shape: the desktop host (www.tiktok.com) and the mobile
+// host (m.tiktok.com). Both name the same video, and the output is
+// always the www form, so the gate never sees a second spelling.
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
+
+// The gate's own limit, from the bounty rules: VIDEO.json is a JSON
+// object of at most 16384 bytes. Refusing an oversized file here,
+// with its size in the message, is cheaper than failing at the gate.
+const MAX_VIDEO_JSON_BYTES = 16384;
 
 // A video address, and nothing else. The handle may hold letters,
 // digits, dots, underscores and hyphens; the id is digits only. A
 // trailing slash, a query string or a fragment — the ?_r=1&_t=…
 // TikTok's own share button appends — is tolerated and then dropped,
 // so the address handed on is always the bare video address.
+// The match is case-insensitive on the scheme and host only in
+// effect: a pasted address with an uppercase host (HTTPS://WWW.…)
+// is still the same video, and the output is always the lowercase
+// canonical form, so a copy-paste casing slip never changes the
+// entry. The handle itself keeps its original casing.
 const TIKTOK_VIDEO_URL =
-  /^https:\/\/www\.tiktok\.com\/@([A-Za-z0-9._-]+)\/video\/(\d+)\/?(?:[?#].*)?$/;
+  /^https:\/\/(?:www|m)\.tiktok\.com\/@([A-Za-z0-9._-]+)\/video\/(\d+)\/?(?:[?#].*)?$/i;
 
-const botDir = process.env.MAKEFUN_BOT_DIR ?? '/bot';
-const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
-const sourcePath = join(botDir, 'VIDEO.json');
+// TikTok handles are 2–24 characters, may not start or end with a
+// dot, underscore or hyphen, and may not hold two dots in a row.
+// The video id is 10–20 digits and never starts with 0. These two
+// checks catch pasted addresses that match the regex's shape but
+// could never be a real TikTok handle or video id.
+function handleIsPlausible(handle) {
+  if (handle.length < 2 || handle.length > 24) return false;
+  if (/^[._-]/.test(handle) || /[._-]$/.test(handle)) return false;
+  if (handle.includes('..')) return false;
+  return true;
+}
+
+function videoIdIsPlausible(videoId) {
+  if (videoId.length < 10 || videoId.length > 20) return false;
+  if (videoId.startsWith('0')) return false;
+  return true;
+}
+
+// Usage text, printed by --help / -h. It states the whole contract
+// in one place: what the program reads, what it accepts, what it
+// writes, and what exit code means what — so nobody has to read the
+// code to run the entry.
+const USAGE = `bring-the-humans-03 entry — hands the TikTok video address to the gate.
+
+Usage:
+  MAKEFUN_BOT_DIR=. MAKEFUN_OUTPUT_DIR=out node main.ts
+  node main.ts --help   (or -h)
+
+The program reads VIDEO.json from MAKEFUN_BOT_DIR (default /bot),
+checks it names exactly one public TikTok video, and writes the
+cleaned address to MAKEFUN_OUTPUT_DIR/VIDEO.json (default /output).
+
+Accepted address shape:
+  https://www.tiktok.com/@<handle>/video/<digits>
+The mobile host m.tiktok.com is accepted too and normalised to www.
+A trailing slash, query string or fragment is tolerated and dropped.
+Refused: short links, photo posts, profile pages, anything else.
+Handle: 2-24 characters, no leading/trailing . _ -, no "..".
+Video id: 10-20 digits, never starting with 0.
+VIDEO.json itself: at most 16384 bytes.
+
+VIDEO.json may hold extra fields besides "url" — they are ignored
+with a note on stderr, and only "url" is used. An extra field whose
+name looks like a second address (it holds "url" or "video") is
+named separately in that note, so a second address pasted under
+another key is visible instead of vanishing.
+
+Exit codes: 0 on success, 1 on any error (the reason on stderr).`;
 
 function fail(message) {
   console.error(`main.ts: ${message}`);
   process.exit(1);
+}
+
+// Flags are read first, so --help works even when VIDEO.json is
+// absent, and a mistyped flag fails here with a pointer to --help
+// instead of being mistaken for a file problem.
+const args = process.argv.slice(2);
+if (args.includes('--help') || args.includes('-h')) {
+  console.log(USAGE);
+  process.exit(0);
+}
+const unknownOption = args.find((arg) => arg.startsWith('-'));
+if (unknownOption !== undefined) {
+  fail(
+    `unknown option ${JSON.stringify(unknownOption)} — this program ` +
+      `takes no options except --help / -h; run "node main.ts --help" for usage`,
+  );
+}
+
+// An empty environment variable is treated as unset, so
+// MAKEFUN_BOT_DIR= (empty) does not become a lookup in the
+// current directory's parent or a write to a nameless folder.
+const botDir = process.env.MAKEFUN_BOT_DIR?.trim() ? process.env.MAKEFUN_BOT_DIR.trim() : '/bot';
+const outDir = process.env.MAKEFUN_OUTPUT_DIR?.trim() ? process.env.MAKEFUN_OUTPUT_DIR.trim() : '/output';
+const sourcePath = join(botDir, 'VIDEO.json');
+
+// Writing the output into the same directory as the source would
+// overwrite the repository's own VIDEO.json with the cleaned copy.
+// That is refused outright, before anything is read, so a run can
+// never destroy its own input.
+if (resolve(botDir) === resolve(outDir)) {
+  fail(
+    `MAKEFUN_OUTPUT_DIR (${outDir}) must differ from MAKEFUN_BOT_DIR (${botDir}) — ` +
+      `writing the output there would overwrite the repository's own VIDEO.json`,
+  );
 }
 
 if (!existsSync(sourcePath)) {
@@ -41,9 +135,24 @@ if (!existsSync(sourcePath)) {
   );
 }
 
+// The size check runs before parsing, so a file over the gate's
+// 16384-byte limit fails with its size stated, not with a
+// misleading JSON error.
+const sourceSize = statSync(sourcePath).size;
+if (sourceSize > MAX_VIDEO_JSON_BYTES) {
+  fail(
+    `VIDEO.json at ${sourcePath} is ${sourceSize} bytes — the gate ` +
+      `accepts at most ${MAX_VIDEO_JSON_BYTES} bytes`,
+  );
+}
+
 let parsed;
 try {
-  parsed = JSON.parse(readFileSync(sourcePath, 'utf8'));
+  // A byte-order mark at the start of the file (some editors add
+  // one) is stripped before parsing, so a valid file is not
+  // refused for an invisible first character.
+  const rawText = readFileSync(sourcePath, 'utf8').replace(/^\uFEFF/, '');
+  parsed = JSON.parse(rawText);
 } catch (error) {
   fail(
     `VIDEO.json at ${sourcePath} is not valid JSON (${error.message}) — ` +
@@ -65,7 +174,36 @@ if (typeof parsed.url !== 'string' || parsed.url.trim() === '') {
   );
 }
 
+// Extra fields are ignored on purpose, but never silently: the note
+// names them in sorted order, so a field added by mistake (a title,
+// a view count, a second address under another key) is visible
+// instead of vanishing. A field whose name suggests it holds an
+// address is called out on its own line, because that is the one
+// mistake that would silently change which video is entered.
+const extraFields = Object.keys(parsed).filter((key) => key !== 'url').sort();
+if (extraFields.length > 0) {
+  console.error(
+    `main.ts: note: ignoring extra fields in VIDEO.json: ${extraFields.join(', ')} — only "url" is used`,
+  );
+  const addressLike = extraFields.filter((key) => /url|video/i.test(key));
+  if (addressLike.length > 0) {
+    console.error(
+      `main.ts: note: ${addressLike.join(', ')} look(s) like a second address field — ignored; only "url" is used`,
+    );
+  }
+}
+
 const url = parsed.url.trim();
+// A space inside the address is never part of a TikTok address —
+// it means two things were pasted together, or a line break crept
+// in. That gets its own error, so the failure names the cause
+// instead of the generic "does not name a TikTok video".
+if (/\s/.test(url)) {
+  fail(
+    `VIDEO.json at ${sourcePath} holds an address with whitespace inside it: ${JSON.stringify(url)} — ` +
+      `paste one address only, with no spaces or line breaks`,
+  );
+}
 const match = TIKTOK_VIDEO_URL.exec(url);
 if (match === null) {
   fail(
@@ -76,8 +214,55 @@ if (match === null) {
 }
 
 const [, handle, videoId] = match;
+if (!handleIsPlausible(handle)) {
+  fail(
+    `VIDEO.json at ${sourcePath} names handle ${JSON.stringify(handle)}, which cannot be a TikTok handle — ` +
+      `handles are 2-24 characters, may not start or end with . _ -, and may not hold ".."`,
+  );
+}
+if (!videoIdIsPlausible(videoId)) {
+  fail(
+    `VIDEO.json at ${sourcePath} names video id ${JSON.stringify(videoId)}, which cannot be a TikTok video id — ` +
+      `ids are 10-20 digits and never start with 0`,
+  );
+}
+
+// The output is always the canonical www form, even when the input
+// used the mobile host, so the gate always sees the same shape.
 const cleanUrl = `https://www.tiktok.com/@${handle}/video/${videoId}`;
 
+// Self-check the cleaned address against the same pattern before
+// writing it. If the cleaning step ever produced a shape the
+// validator would refuse, the run fails here instead of writing a
+// file the gate would reject.
+if (TIKTOK_VIDEO_URL.exec(cleanUrl) === null) {
+  fail(`internal error: cleaned address ${JSON.stringify(cleanUrl)} does not match the TikTok video shape`);
+}
+
 mkdirSync(outDir, { recursive: true });
-writeFileSync(join(outDir, 'VIDEO.json'), JSON.stringify({ url: cleanUrl }, null, 2) + '\n');
+const outPath = join(outDir, 'VIDEO.json');
+// Say so when an earlier output file is about to be replaced, so
+// a stale file from a previous run is never mistaken for this
+// run's result when the log is read later.
+if (existsSync(outPath)) {
+  console.error(`main.ts: note: replacing existing ${outPath} with this run's address`);
+}
+writeFileSync(outPath, JSON.stringify({ url: cleanUrl }, null, 2) + '\n');
+
+// Read the file back and prove it holds exactly what was meant to
+// be written. A write that silently landed elsewhere, or a
+// directory that another process shares, fails here with a plain
+// message instead of handing the gate a file nobody checked.
+let writtenBack;
+try {
+  writtenBack = JSON.parse(readFileSync(outPath, 'utf8'));
+} catch (error) {
+  fail(`wrote ${outPath} but could not read it back (${error.message})`);
+}
+if (writtenBack?.url !== cleanUrl) {
+  fail(
+    `wrote ${outPath} but reading it back gave ${JSON.stringify(writtenBack?.url)} ` +
+      `instead of ${JSON.stringify(cleanUrl)} — the output was not verified`,
+  );
+}
 console.log(`entry video: ${cleanUrl}`);
