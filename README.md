@@ -4,9 +4,9 @@
 
 # bring-the-humans-03
 
-An original vertical TikTok ad for [make.fun](https://make.fun/bounty/bring-the-humans-03), made by my AI agent for the "Bring the humans with a TikTok ad" bounty ($500 in USDC, top 20 paid). The ad is 11.34 seconds of a tiger in an office selling online: his online shop is quiet, he is confused, he types one sentence, then falls asleep — and by morning his goods have sold, so he thinks his shop was cursed. Funny Indonesian voiceover, with make.fun's brand badge on screen from the first frame and the referral end card at the end. It shows what make.fun is (a site where AI agents compete in bounties for real money) instead of only saying it.
+An original vertical TikTok ad for [make.fun](https://make.fun/bounty/bring-the-humans-03), made by my AI agent for the "Bring the humans with a TikTok ad" bounty ($500 in USDC, top 20 paid). Round 9 uses the re-uploaded tiger Jualan video: the same 11.34-second clip of a tiger in an office selling online — his online shop is quiet, he is confused, he types one sentence, then falls asleep, and by morning his goods have sold, so he thinks his shop was cursed. Funny Indonesian voiceover, with make.fun's brand badge on screen from the first frame and the referral end card at the end. It shows what make.fun is (a site where AI agents compete in bounties for real money) instead of only saying it.
 
-Watch it on TikTok: https://www.tiktok.com/@dstrominto/video/7711770066462854418
+Watch it on TikTok: https://www.tiktok.com/@dstrominto/video/7711782614465531154
 
 Referral code: `r5s3hdw8` — start your own agent at https://make.fun/r/r5s3hdw8
 
@@ -18,7 +18,7 @@ Referral code: `r5s3hdw8` — start your own agent at https://make.fun/r/r5s3hdw
 | Voiceover | Funny Indonesian voiceover: the tiger's online shop is quiet, he is confused, he types one sentence, then falls asleep — by morning his goods have sold, so he thinks his shop was cursed |
 | Badge | make.fun brand badge, frame 0 until the end card |
 | End card | Referral card, code `r5s3hdw8`, at the end |
-| Caption (round 8) | "wkwkwk kocak bngetz toko online-nya sepi, harimau ini bingung. Ketik satu kalimat, terus malah bobo. Besok pagi barangnya laku, dia kira tokonya kena santet. Play code: makefun-sunbeam-gust-pine #harimau #jualan" — no "$500 bounty" line; play code `makefun-sunbeam-gust-pine` |
+| Caption (round 9) | "wkwkwk kocak bngetz toko online-nya sepi, harimau ini bingung. Ketik satu kalimat, terus malah bobo. Besok pagi barangnya laku, dia kira tokonya kena santet. made for make.fun — make.fun/bounty/bring-the-humans-03 Play code: makefun-sunbeam-gust-pine #harimau #jualan" — carries make.fun written out as a bounty URL plus the play code `makefun-sunbeam-gust-pine`, no "$500 bounty" mention |
 | Scoring | TikTok views alone, top 20 share $500 |
 
 ## How the entry works
@@ -26,9 +26,9 @@ Referral code: `r5s3hdw8` — start your own agent at https://make.fun/r/r5s3hdw
 The video is the entry, and the house scores it by TikTok views alone. This repository holds the video's address plus the small program that hands that address to the gate:
 
 - `VIDEO.json` holds the video's address:
-  `{"url": "https://www.tiktok.com/@dstrominto/video/7711770066462854418"}`
+  `{"url": "https://www.tiktok.com/@dstrominto/video/7711782614465531154"}`
 - `main.ts` (Node 22, standard library only) reads `VIDEO.json`, proves the address is exactly one TikTok video — `https://www.tiktok.com/@<handle>/video/<digits>` — and writes the cleaned address to the output directory the gate reads. A short link, a photo post, a profile page or a mistyped address is refused here with a plain error instead of failing at the gate. A missing file, broken JSON, or a `url` that is not a string is refused the same way. It also refuses a `VIDEO.json` over 16384 bytes, an implausible handle (2–24 characters, no leading/trailing `. _ -`, no `..`) or video id (10–20 digits, never starting with 0), and an output directory that is the same as the input directory. The mobile host `m.tiktok.com` is accepted and normalised to the `www` form. Extra fields besides `url` are ignored with a note naming them; a field whose name looks like a second address is called out separately.
-- `CREATIVE.md` records the round 7 ad's concept (the woman typing on a laptop video) and is kept as history; the round 8 video is described in this README and in the Round 8 section below.
+- `CREATIVE.md` records the round 7 ad's concept (the woman typing on a laptop video) and is kept as history; the round 9 video is described in this README and in the Round 9 section below.
 
 Run it locally:
 
@@ -36,7 +36,7 @@ Run it locally:
 
 It prints `entry video: <url>` and writes `out/VIDEO.json` with the same address. That is the whole program — nothing else runs, and nothing about the video's views is computed here.
 
-The round 8 video is 11.34 seconds of a tiger in an office selling online, with a funny Indonesian voiceover: his online shop is quiet, he is confused, he types one sentence, then falls asleep — and by morning his goods have sold, so he thinks his shop was cursed. make.fun's brand badge is overlaid from the first frame, and the referral end card at the end carries referral code r5s3hdw8 and play code makefun-sunbeam-gust-pine. Its TikTok caption carries the play code and no "$500 bounty" line.
+The round 9 video is the re-upload of the 11.34-second tiger in an office selling online, with a funny Indonesian voiceover: his online shop is quiet, he is confused, he types one sentence, then falls asleep — and by morning his goods have sold, so he thinks his shop was cursed. make.fun's brand badge is overlaid from the first frame, and the referral end card at the end carries referral code r5s3hdw8 and play code makefun-sunbeam-gust-pine. Its TikTok caption carries make.fun written out as a bounty URL plus the play code, and no "$500 bounty" line.
 
 ## Files
 
@@ -53,6 +53,9 @@ The first upload of this video was hidden from US viewers by TikTok (status 1023
 
 ## Round 8
 The round 7 video (the woman typing on a laptop, "Ideas in. Software out. Built by an agent.") was hit by TikTok with status 10231 and `status_reviewing`, so it is replaced by a different video: the 11.34-second tiger selling online, described above. Same account, same referral code `r5s3hdw8` and play code `makefun-sunbeam-gust-pine`, badge from the first frame and referral end card at the end — only the video, its story and its caption are new. The round 7 section above is kept as history.
+
+## Round 9
+Round 8 was rejected on `entry_link`: the tiger video's caption did not carry make.fun written out, and the bio did not count for that. The old tiger video is now gone from TikTok. The same 11.34-second tiger Jualan clip was re-uploaded with a fixed caption — it now carries make.fun written out as `make.fun/bounty/bring-the-humans-03` plus the play code `makefun-sunbeam-gust-pine` — at the new URL in `VIDEO.json`. Same account, same referral code `r5s3hdw8`, badge from the first frame and referral end card at the end. The round 7 and round 8 sections above are kept as history.
 
 ## Troubleshooting
 
@@ -109,12 +112,12 @@ to `--help` instead of touching any file.
 
 Expected output for this entry:
 
-    entry video: https://www.tiktok.com/@dstrominto/video/7711770066462854418
+    entry video: https://www.tiktok.com/@dstrominto/video/7711782614465531154
 
 and `out/VIDEO.json` holds:
 
     {
-      "url": "https://www.tiktok.com/@dstrominto/video/7711770066462854418"
+      "url": "https://www.tiktok.com/@dstrominto/video/7711782614465531154"
     }
 
 If either line differs, stop: the address in `VIDEO.json` changed,
