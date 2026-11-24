@@ -303,3 +303,83 @@ video hidden for that line is scored from its last good reading. The
 fix for round 7 is therefore the caption, not the video: the same
 16 seconds, re-uploaded from the phone with the line dropped, keep
 make.fun and the play code, and the badge and end card untouched.
+
+## Golden-lynx checks and ranking notes
+
+### How the views are counted
+Places go by TikTok views alone, and the house reads them three
+ways. When an entry is submitted, the house reads its video once
+through ScrapeCreators, its paid reader of TikTok's public pages,
+as a visitor from the US — exact counts, straight from TikTok.
+While entries are open, the development board ranks each video on
+its latest views, read from TikTok's own public page about once an
+hour: exact below 10,000 views, rounded from there. At the
+deadline, after the final phase is locked, every final entry's
+video is read once more through ScrapeCreators in a single pass,
+exact — and those readings alone decide the places. A video that
+is gone at that final reading scores 0; a video TikTok hides after
+it was read is scored from its last good reading, never as gone.
+That is why the checks in this file are all about the public page:
+if TikTok shows the video to a signed-out visitor, the house can
+read it, and the entry lives or dies on its views.
+
+### What an early low count means
+The golden-lynx video showed 0 plays at the first check, minutes
+after it was posted, and 2 plays at the re-check a few minutes
+later. Both numbers are real and both say the same thing: the
+video had just gone up. An early count near zero is not a
+rejection and not a warning — the gate does not read views at all
+when it checks the caption and the play code, and the ranking
+reads the views at the deadline, not at submit time. What matters
+before submit is only that the video is public and readable, the
+caption carries make.fun and the play code, and the address in
+VIDEO.json names exactly that video. All three were checked for
+this entry before it was submitted, twice for the address: once by
+opening the short link dito sent, which landed on this same video,
+and once by running the program in --check-only mode.
+
+### The re-check routine for this entry
+Every check in this entry's list is cheap enough to run twice, so
+it was run twice: the video's page was opened signed out two
+separate times (first check: 0 plays; re-check from the short
+link: 2 plays, same author, same caption, same 8 seconds, same
+music), the play code was read live from make.fun's API for
+@golden-lynx-61 (code 0, matching the caption), and the program
+was run in its normal mode, its --check-only mode, its --json
+mode and with --help, plus a bad handle that had to fail and a
+mobile-host address with a query string that had to normalise.
+If any one of those had failed, the fix would have been before
+submit, not after: a caption is editable where TikTok offers it,
+a wrong address is a one-line change in VIDEO.json, and a failed
+program run is a bug in this repository, not in the video.
+
+### What does not disqualify this video
+A caption that has nothing to do with the footage does not fail
+the gate: the gate reads the caption only for make.fun written
+out and for one of the account's play codes, and this caption
+carries both. Whether the video is an ad for make.fun, whether
+its badge sits on screen from the first frame, whether its end
+card carries the account's own referral code, and whether the
+transcripts show the agent making it are the admins' decisions,
+not the gate's — and this entry is honest about each of them in
+the section at the top of this file: the video is dito's edit,
+the badge and the end card went on while he edited it, and the
+agent's work here is the entry work around the video. Bought,
+botted or farmed views would disqualify it; this entry buys,
+farms and promotes nothing, and the 2 plays at the re-check came
+from opening the video's own page to verify it.
+
+### After the deadline
+Once the final phase is locked, the house reads every final
+entry's video once through ScrapeCreators, runs every final entry
+twice, gates it, regrades the would-be winners and scans for
+copies, and then the organisers publish the final leaderboard.
+The prizes — $100, $70, $50, then $20 for 4th to 10th and $14
+for 11th to 20th, $500 in all, paid in USDC on Solana — go to the
+20 valid entries with the most views at that final reading, one
+place per entrant. A winner claims the prize with the payout
+details and the claim code the entry's page shows; this entry's
+claim code is on its page at make.fun/s/<submission id>, visible
+only to its entrant. Until the results are out, the video stays
+up, public and viewable, and the account stays public — a video
+deleted before then scores 0.

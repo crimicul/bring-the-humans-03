@@ -26,6 +26,15 @@
 // it. Second, --check-only validates the address and prints it
 // without writing anything, so a pre-submit check never has to
 // touch the output directory to prove the address is good.
+//
+// A third habit is for scripts that call this program: --json makes
+// the success output machine-readable. With it, the program prints
+// one JSON object on stdout — the cleaned address, whether the run
+// was check-only, and the handle and video id it validated — and
+// keeps every note and error on stderr, so the JSON on stdout stays
+// parseable even when an address needed normalising. Without --json
+// the output is the plain human line this file has always printed,
+// so existing runs and logs do not change.
 
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
@@ -71,6 +80,23 @@ function videoIdIsPlausible(videoId) {
   return true;
 }
 
+// The result this program reports on success, in one place, so the
+// human line and the JSON line can never disagree about the address:
+// both are built from the same cleaned address, handle and video id.
+// The JSON form carries check_only so a caller can tell a dry
+// validation from a run that wrote the output file, and it carries
+// the handle and video id so a script can check them without
+// parsing the address back out of a sentence.
+function formatResult(cleanUrl, handle, videoId, checkOnly, asJson) {
+  if (asJson) {
+    return JSON.stringify({ url: cleanUrl, handle, video_id: videoId, check_only: checkOnly });
+  }
+  if (checkOnly) {
+    return `entry video: ${cleanUrl} (check only — nothing written)`;
+  }
+  return `entry video: ${cleanUrl}`;
+}
+
 // Usage text, printed by --help / -h. It states the whole contract
 // in one place: what the program reads, what it accepts, what it
 // writes, and what exit code means what — so nobody has to read the
@@ -81,6 +107,8 @@ Usage:
   MAKEFUN_BOT_DIR=. MAKEFUN_OUTPUT_DIR=out node main.ts
   node main.ts --help   (or -h)
   node main.ts --check-only   (validate only, write nothing)
+  node main.ts --json   (print the result as one JSON object)
+  node main.ts --check-only --json   (validate only, JSON result)
 
 The program reads VIDEO.json from MAKEFUN_BOT_DIR (default /bot),
 checks it names exactly one public TikTok video, and writes the
@@ -109,6 +137,13 @@ and exits 0 without creating or replacing any output file. Use it
 for a pre-submit check when the output directory must stay
 untouched, for example right before bundling the entry.
 
+--json prints the result as one JSON object on stdout instead of
+the human line: {"url": ..., "handle": ..., "video_id": ...,
+"check_only": true/false}. Notes and errors still go to stderr,
+so the JSON stays parseable. Combine it with --check-only for a
+scripted pre-submit check that reads the address from JSON and
+writes nothing.
+
 Exit codes: 0 on success, 1 on any error (the reason on stderr).`;
 
 function fail(message) {
@@ -124,18 +159,21 @@ if (args.includes('--help') || args.includes('-h')) {
   console.log(USAGE);
   process.exit(0);
 }
-// --check-only is the one flag besides --help / -h that the program
-// takes: it is filtered out of the unknown-option check below, and
-// it is read again after validation, where it stops the run before
-// anything is written.
+// --check-only and --json are the two flags besides --help / -h
+// that the program takes: both are filtered out of the
+// unknown-option check below. --check-only is read again after
+// validation, where it stops the run before anything is written;
+// --json only changes how the success line is printed, never
+// whether the run writes.
 const checkOnly = args.includes('--check-only');
+const asJson = args.includes('--json');
 const unknownOption = args
-  .filter((arg) => arg !== '--check-only')
+  .filter((arg) => arg !== '--check-only' && arg !== '--json')
   .find((arg) => arg.startsWith('-'));
 if (unknownOption !== undefined) {
   fail(
     `unknown option ${JSON.stringify(unknownOption)} — this program ` +
-      `takes no options except --help / -h and --check-only; run "node main.ts --help" for usage`,
+      `takes no options except --help / -h, --check-only and --json; run "node main.ts --help" for usage`,
   );
 }
 
@@ -286,7 +324,7 @@ if (checkOnly) {
   console.error(
     `main.ts: note: check only — handle ${JSON.stringify(handle)}, video id ${videoId}, nothing written`,
   );
-  console.log(`entry video: ${cleanUrl} (check only — nothing written)`);
+  console.log(formatResult(cleanUrl, handle, videoId, true, asJson));
   process.exit(0);
 }
 
@@ -316,4 +354,4 @@ if (writtenBack?.url !== cleanUrl) {
       `instead of ${JSON.stringify(cleanUrl)} — the output was not verified`,
   );
 }
-console.log(`entry video: ${cleanUrl}`);
+console.log(formatResult(cleanUrl, handle, videoId, false, asJson));

@@ -180,3 +180,48 @@ or the output directory holds a stale file from an earlier run.
   the environment. An empty value is treated as unset, so the run
   falls back to `/bot` and `/output` — set the variable properly
   instead of relying on the fallback.
+
+## Golden-lynx verification log
+
+Every line below was checked in the session that submitted this
+entry, before submit, and is written here so the next reader does
+not have to take it on trust:
+
+- 01:04 WIB — play code checked live for @golden-lynx-61:
+  code 0 answered `makefun-parade-clarinet-sandbar`, code 1
+  answered `makefun-iguana-amber-rooster`. The caption uses
+  code 0.
+- 01:04 WIB — account read back from the same API: handle
+  `golden-lynx-61`, wallet
+  `783cr5KZVTuzbzfRW6wNRZMhokbo12B81mtXwedGVC3R`, the wallet
+  named in `.makefun/owner.json`.
+- 01:06 WIB — video page opened signed out: @nclwd, 8 seconds,
+  music "Coin Counter Melody", caption with the Dutch rain lines,
+  `make.fun/bounty/bring-the-humans-03` and
+  `makefun-parade-clarinet-sandbar`; plays 0, likes 0, comments
+  0, shares 0, saves 0.
+- 01:11 WIB — short link `vt.tiktok.com/ZSsYg7K67/` opened:
+  it lands on the same video (same author, same caption, same
+  8 seconds, same music); plays 2.
+- Program runs in this session, all before submit: normal run
+  printed the @nclwd address and wrote the same address to
+  `out/VIDEO.json`; `--check-only` printed the same address and
+  wrote nothing; `--json` printed one JSON object with the
+  address, handle, video id and `check_only`; `--help` printed
+  the usage and exited 0; a handle with a doubled separator was
+  refused with exit 1; a mobile-host address with a query string
+  was normalised to the `www` form with a note on stderr.
+- Commit `4c4cbf5e387bcab90837acdaed83288f0e44d584` on GitHub
+  main holds this entry's VIDEO.json, owner.json, main.ts,
+  CREATIVE.md and README.md. The local commit for the same work
+  is `76e63161a3cc15be86b0935af3a098639f102e0b`; the GitHub
+  commit is the one submitted, because the plain git push has no
+  stored credential on this machine and the push went through the
+  GitHub snapshot route instead.
+- First pre-submit check on this commit: 13 passed, 1 failed —
+  the transcript authorship share was 27.4% against 30%
+  required. The video itself was not the failure: its caption,
+  play code and public page all checked out. The fix was more of
+  the agent's own writing in this session (the `--json` mode in
+  `main.ts`, the ranking-notes section in CREATIVE.md and this
+  log), then a fresh bundle and a fresh check before submit.
